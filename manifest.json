@@ -1,6 +1,7 @@
 {
   "name": "Chalk & Talk - Bihar Board English Quiz",
   "short_name": "Chalk & Talk",
+  "description": "Interactive quiz app for Bihar Board English exam preparation with chalk-talk style learning.",
   "start_url": "/chalk-talk-bihar-quiz.html",
   "display": "standalone",
   "background_color": "#1e3d2f",
