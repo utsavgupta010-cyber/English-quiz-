@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#1e3d2f">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<title>Chalk & Talk — Bihar Board English Quiz</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Kalam:wght@400;700&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --board:#1e3d2f;
+    --board-dark:#152b21;
+    --chalk:#f4f1e8;
+    --chalk-dim:#c9d4c9;
+    --yellow:#f2c14e;
+    --coral:#f26d5b;
+    --sky:#6ec6d9;
+    --frame:#6b4a35;
+    --green-ok:#b2d696;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;height:100%;font-family:'Nunito',sans-serif;background:var(--board-dark);-webkit-tap-highlight-color:transparent;overscroll-behavior:none;}
+  body{
+    background-image:radial-gradient(ellipse at top, rgba(255,255,255,0.03), transparent 60%),
+      repeating-linear-gradient(0deg, rgba(255,255,255,0.015) 0px, rgba(255,255,255,0.015) 1px, transparent 1px, transparent 42px);
+    min-height:100vh;display:flex;align-items:center;justify-content:center;padding:14px;
+  }
+  .frame{
+    width:100%;max-width:430px;background:var(--board);border-radius:18px;border:10px solid var(--frame);
+    box-shadow:0 20px 50px rgba(0,0,0,0.5), inset 0 0 40px rgba(0,0,0,0.25);
+    padding:16px 16px 12px;position:relative;overflow:hidden;min-height:600px;display:flex;flex-direction:column;
+  }
+  header{text-align:center;margin-bottom:10px;}
+  .logo-wrap{display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:2px;}
+  .logo-img{width:38px;height:38px;border-radius:8px;object-fit:cover;border:2px solid var(--yellow);}
+  h1{font-family:'Kalam',cursive;color:var(--chalk);font-size:1.6rem;margin:0;letter-spacing:0.3px;}
+  .subtitle{color:var(--chalk-dim);font-size:0.72rem;margin:2px 0 0;font-weight:700;letter-spacing:0.4px;}
+  .logo-btn{background:none;border:none;color:var(--sky);font-size:0.7rem;text-decoration:underline;cursor:pointer;margin-top:4px;font-family:'Nunito',sans-serif;}
+
+  .selectors{display:flex;gap:8px;margin-bottom:10px;}
+  .seg{flex:1;display:flex;background:rgba(0,0,0,0.2);border-radius:10px;padding:3px;}
+  .seg button{
+    flex:1;background:transparent;border:none;color:var(--chalk-dim);padding:8px 4px;border-radius:8px;
+    font-family:'Nunito',sans-serif;font-weight:700;font-size:0.8rem;cursor:pointer;
+  }
+  .seg button.active{background:var(--yellow);color:#2a2110;}
+
+  .tabbar{display:flex;gap:6px;margin-bottom:12px;}
+  .tab{
+    flex:1;background:rgba(244,241,232,0.06);border:1.5px solid rgba(244,241,232,0.25);color:var(--chalk-dim);
+    padding:8px 4px;border-radius:9px;font-family:'Nunito',sans-serif;font-weight:800;font-size:0.75rem;cursor:pointer;
+  }
+  .tab.active{border-color:var(--sky);color:var(--sky);background:rgba(110,198,217,0.1);}
+
+  .view{flex:1;display:none;flex-direction:column;}
+  .view.active{display:flex;}
+
+  /* Quiz view */
+  .dots{display:flex;justify-content:center;gap:5px;margin-bottom:12px;flex-wrap:wrap;}
+  .dot{width:8px;height:8px;border-radius:50%;border:1.5px solid var(--chalk-dim);background:transparent;}
+  .dot.done{background:var(--yellow);border-color:var(--yellow);}
+  .dot.current{background:var(--sky);border-color:var(--sky);transform:scale(1.3);}
+
+  .card{background:rgba(244,241,232,0.05);border:1.5px dashed rgba(244,241,232,0.35);border-radius:14px;padding:16px 14px;flex:1;display:flex;flex-direction:column;}
+  .qmeta{color:var(--yellow);font-family:'Kalam',cursive;font-size:0.9rem;margin-bottom:4px;}
+  .question{color:var(--chalk);font-size:1.1rem;font-weight:800;line-height:1.4;margin-bottom:14px;min-height:50px;}
+  .options{display:flex;flex-direction:column;gap:8px;margin-top:auto;}
+  .opt{background:transparent;border:2px solid rgba(244,241,232,0.4);color:var(--chalk);border-radius:10px;padding:10px 12px;font-size:0.92rem;font-family:'Nunito',sans-serif;font-weight:700;text-align:left;cursor:pointer;position:relative;}
+  .opt.correct{background:rgba(178,214,150,0.15);border-color:var(--green-ok);color:#d9f2c4;}
+  .opt.wrong{background:rgba(242,109,91,0.15);border-color:var(--coral);color:#ffd2cb;}
+  .opt:disabled{cursor:default;}
+
+  .feedback{font-family:'Kalam',cursive;font-size:0.95rem;margin-top:10px;color:var(--sky);}
+  .explain{background:rgba(110,198,217,0.08);border-left:3px solid var(--sky);border-radius:6px;padding:8px 10px;margin-top:8px;color:var(--chalk-dim);font-size:0.82rem;line-height:1.4;display:none;}
+  .explain.show{display:block;}
+
+  .next-btn{margin-top:10px;background:var(--yellow);color:#2a2110;border:none;border-radius:10px;padding:12px;font-size:0.95rem;font-weight:800;cursor:pointer;display:none;box-shadow:0 4px 0 #b4913a;}
+  .next-btn.show{display:block;}
+
+  .empty-state{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;color:var(--chalk-dim);gap:10px;padding:20px;}
+  .empty-state .big{font-family:'Kalam',cursive;color:var(--chalk);font-size:1.2rem;}
+
+  .result{flex:1;display:none;flex-direction:column;align-items:center;justify-content:center;color:var(--chalk);text-align:center;}
+  .result.show{display:flex;}
+  .result .big{font-family:'Kalam',cursive;font-size:2.4rem;color:var(--yellow);margin-bottom:4px;}
+  .result .msg{font-family:'Kalam',cursive;font-size:1.1rem;color:var(--sky);margin:12px 0 18px;}
+  .retry-btn{background:transparent;border:2px solid var(--sky);color:var(--sky);border-radius:10px;padding:11px 24px;font-weight:800;font-size:0.95rem;cursor:pointer;}
+
+  /* Add view */
+  .form-scroll{flex:1;overflow-y:auto;padding-right:2px;}
+  label{display:block;color:var(--chalk-dim);font-size:0.75rem;font-weight:700;margin:10px 0 4px;}
+  label:first-child{margin-top:0;}
+  input[type=text], textarea{
+    width:100%;background:rgba(244,241,232,0.08);border:1.5px solid rgba(244,241,232,0.3);border-radius:8px;
+    color:var(--chalk);padding:9px 10px;font-family:'Nunito',sans-serif;font-size:0.88rem;
+  }
+  textarea{resize:vertical;min-height:50px;}
+  .opt-row{display:flex;align-items:center;gap:8px;margin-bottom:6px;}
+  .opt-row input[type=text]{flex:1;}
+  .opt-row input[type=radio]{width:18px;height:18px;accent-color:var(--yellow);flex-shrink:0;}
+  .save-btn{margin-top:14px;background:var(--sky);color:#0d2b32;border:none;border-radius:10px;padding:12px;font-weight:800;font-size:0.95rem;cursor:pointer;width:100%;box-shadow:0 4px 0 #4b95a3;}
+  .save-msg{text-align:center;color:var(--green-ok);font-size:0.8rem;margin-top:8px;min-height:16px;font-weight:700;}
+
+  /* Manage view */
+  .manage-list{flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:8px;}
+  .manage-item{background:rgba(244,241,232,0.05);border:1px solid rgba(244,241,232,0.2);border-radius:10px;padding:10px 12px;}
+  .manage-item .qtxt{color:var(--chalk);font-size:0.85rem;font-weight:700;margin-bottom:4px;}
+  .manage-item .meta{color:var(--chalk-dim);font-size:0.72rem;}
+  .del-btn{background:none;border:1px solid var(--coral);color:var(--coral);border-radius:6px;padding:4px 10px;font-size:0.72rem;font-weight:700;cursor:pointer;margin-top:6px;}
+
+  ::-webkit-scrollbar{width:5px;}
+  ::-webkit-scrollbar-thumb{background:rgba(244,241,232,0.2);border-radius:4px;}
+</style>
+</head>
+<body>
+<div class="frame">
+  <header>
+    <div class="logo-wrap" id="logoWrap"></div>
+    <h1>Chalk &amp; Talk</h1>
+    <p class="subtitle">BIHAR BOARD ENGLISH · CLASS 10 &amp; 12</p>
+    <button class="logo-btn" id="logoBtn">Upload school / app logo</button>
+    <input type="file" id="logoInput" accept="image/*" style="display:none;">
+  </header>
+
+  <div class="selectors">
+    <div class="seg" id="classSeg">
+      <button data-val="10" class="active">Class 10</button>
+      <button data-val="12">Class 12</button>
+    </div>
+    <div class="seg" id="sectionSeg">
+      <button data-val="book" class="active">Book</button>
+      <button data-val="grammar">Grammar</button>
+    </div>
+  </div>
+
+  <div class="tabbar">
+    <button class="tab active" data-view="quiz">▶ Quiz</button>
+    <button class="tab" data-view="add">+ Add</button>
+    <button class="tab" data-view="manage">☰ Manage</button>
+  </div>
+
+  <!-- QUIZ VIEW -->
+  <div class="view active" id="view-quiz">
+    <div class="dots" id="dots"></div>
+    <div class="card" id="quizCard">
+      <div class="qmeta" id="qmeta"></div>
+      <div class="question" id="questionText"></div>
+      <div class="options" id="options"></div>
+      <div class="feedback" id="feedback"></div>
+      <div class="explain" id="explain"></div>
+      <button class="next-btn" id="nextBtn">Next →</button>
+    </div>
+    <div class="result" id="result">
+      <div class="big" id="scoreBig">0/0</div>
+      <div class="msg" id="resultMsg"></div>
+      <button class="retry-btn" id="retryBtn">Try Again</button>
+    </div>
+    <div class="empty-state" id="emptyState" style="display:none;">
+      <div class="big">No questions here yet</div>
+      <div>Tap <strong>+ Add</strong> below to create your first question for this class and section.</div>
+    </div>
+  </div>
+
+  <!-- ADD VIEW -->
+  <div class="view" id="view-add">
+    <div class="form-scroll">
+      <div style="color:var(--yellow);font-family:'Kalam',cursive;font-size:0.9rem;margin-bottom:6px;" id="addingTo"></div>
+      <label>Question</label>
+      <textarea id="fQuestion" placeholder="e.g. What is the theme of the poem...?"></textarea>
+
+      <label>Options (select the correct one)</label>
+      <div class="opt-row"><input type="radio" name="correctOpt" value="0" checked><input type="text" id="fOpt0" placeholder="Option A"></div>
+      <div class="opt-row"><input type="radio" name="correctOpt" value="1"><input type="text" id="fOpt1" placeholder="Option B"></div>
+      <div class="opt-row"><input type="radio" name="correctOpt" value="2"><input type="text" id="fOpt2" placeholder="Option C"></div>
+      <div class="opt-row"><input type="radio" name="correctOpt" value="3"><input type="text" id="fOpt3" placeholder="Option D"></div>
+
+      <label>Explanation (shown after answering — optional)</label>
+      <textarea id="fExplain" placeholder="Explain why this answer is correct..."></textarea>
+
+      <button class="save-btn" id="saveBtn">Save Question</button>
+      <div class="save-msg" id="saveMsg"></div>
+    </div>
+  </div>
+
+  <!-- MANAGE VIEW -->
+  <div class="view" id="view-manage">
+    <div class="manage-list" id="manageList"></div>
+  </div>
+</div>
+
+<script>
+const STORAGE_KEY = 'chalkTalkBiharData';
+
+const DEFAULTS = {
+  logo: null,
+  questions: {
+    "10": {
+      book: [],
+      grammar: [
+        { q: "She ___ to school every day.", opts: ["go","goes","going","gone"], a: 1, ex: "'She' is third person singular, so the verb takes 's' — 'goes'." },
+        { q: "Choose the correct plural of 'child'.", opts: ["Childs","Childes","Children","Childies"], a: 2, ex: "'Child' has an irregular plural: 'children'." }
+      ]
+    },
+    "12": {
+      book: [],
+      grammar: [
+        { q: "He is taller ___ his brother.", opts: ["than","then","from","as"], a: 0, ex: "'Than' is used for comparisons; 'then' refers to time." },
+        { q: "I have ___ apple in my bag.", opts: ["a","an","the","some"], a: 1, ex: "'An' is used before words starting with a vowel sound, like 'apple'." }
+      ]
+    }
+  }
+};
+
+function loadData(){
+  try{
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return JSON.parse(JSON.stringify(DEFAULTS));
+    const parsed = JSON.parse(raw);
+    if (!parsed.questions) parsed.questions = JSON.parse(JSON.stringify(DEFAULTS.questions));
+    return parsed;
+  }catch(e){
+    return JSON.parse(JSON.stringify(DEFAULTS));
+  }
+}
+function saveData(){
+  try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); }
+  catch(e){ console.error('Storage failed', e); }
+}
+
+let data = loadData();
+let currentClass = "10";
+let currentSection = "book";
+let current = 0;
+let score = 0;
+let answered = false;
+let activeQuestions = [];
+
+function renderLogo(){
+  const wrap = document.getElementById('logoWrap');
+  wrap.innerHTML = '';
+  if (data.logo){
+    const img = document.createElement('img');
+    img.src = data.logo;
+    img.className = 'logo-img';
+    wrap.appendChild(img);
+  }
+}
+
+document.getElementById('logoBtn').addEventListener('click', () => {
+  document.getElementById('logoInput').click();
+});
+document.getElementById('logoInput').addEventListener('change', (e) => {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = () => {
+    data.logo = reader.result;
+    saveData();
+    renderLogo();
+  };
+  reader.readAsDataURL(file);
+});
+
+document.getElementById('classSeg').addEventListener('click', (e) => {
+  if (e.target.tagName !== 'BUTTON') return;
+  currentClass = e.target.dataset.val;
+  [...e.currentTarget.children].forEach(b => b.classList.toggle('active', b === e.target));
+  refreshAll();
+});
+document.getElementById('sectionSeg').addEventListener('click', (e) => {
+  if (e.target.tagName !== 'BUTTON') return;
+  currentSection = e.target.dataset.val;
+  [...e.currentTarget.children].forEach(b => b.classList.toggle('active', b === e.target));
+  refreshAll();
+});
+
+document.querySelectorAll('.tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+    document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+    document.getElementById('view-' + tab.dataset.view).classList.add('active');
+    if (tab.dataset.view === 'add') updateAddingLabel();
+    if (tab.dataset.view === 'manage') renderManageList();
+  });
+});
+
+function getBucket(){
+  if (!data.questions[currentClass]) data.questions[currentClass] = { book: [], grammar: [] };
+  if (!data.questions[currentClass][currentSection]) data.questions[currentClass][currentSection] = [];
+  return data.questions[currentClass][currentSection];
+}
+
+function classLabel(){ return "Class " + currentClass; }
+function sectionLabel(){ return currentSection === 'book' ? 'Book Section' : 'Grammar Section'; }
+
+function updateAddingLabel(){
+  document.getElementById('addingTo').textContent = 'Adding to: ' + classLabel() + ' · ' + sectionLabel();
+}
+
+function refreshAll(){
+  updateAddingLabel();
+  startQuiz();
+  renderManageList();
+}
+
+/* ---------- QUIZ ---------- */
+function buildDots(){
+  const dotsEl = document.getElementById('dots');
+  dotsEl.innerHTML = '';
+  activeQuestions.forEach((_, i) => {
+    const d = document.createElement('div');
+    d.className = 'dot';
+    d.id = 'dot-' + i;
+    dotsEl.appendChild(d);
+  });
+}
+function updateDots(){
+  activeQuestions.forEach((_, i) => {
+    const d = document.getElementById('dot-' + i);
+    d.classList.remove('current','done');
+    if (i < current) d.classList.add('done');
+    else if (i === current) d.classList.add('current');
+  });
+}
+
+function startQuiz(){
+  activeQuestions = getBucket();
+  current = 0; score = 0;
+  document.getElementById('result').classList.remove('show');
+  document.getElementById('quizCard').style.display = 'flex';
+  document.getElementById('dots').style.display = 'flex';
+  const emptyEl = document.getElementById('emptyState');
+  if (activeQuestions.length === 0){
+    emptyEl.style.display = 'flex';
+    document.getElementById('quizCard').style.display = 'none';
+    document.getElementById('dots').style.display = 'none';
+    return;
+  }
+  emptyEl.style.display = 'none';
+  buildDots();
+  renderQuestion();
+}
+
+function renderQuestion(){
+  answered = false;
+  const item = activeQuestions[current];
+  document.getElementById('qmeta').textContent = classLabel() + ' · ' + sectionLabel() + ' — Q' + (current+1) + ' of ' + activeQuestions.length;
+  document.getElementById('questionText').textContent = item.q;
+  const fb = document.getElementById('feedback');
+  fb.textContent = '';
+  const ex = document.getElementById('explain');
+  ex.classList.remove('show');
+  ex.textContent = '';
+  document.getElementById('nextBtn').classList.remove('show');
+  const optionsEl = document.getElementById('options');
+  optionsEl.innerHTML = '';
+  item.opts.forEach((opt, idx) => {
+    const btn = document.createElement('button');
+    btn.className = 'opt';
+    btn.textContent = opt;
+    btn.addEventListener('click', () => selectAnswer(idx, btn));
+    optionsEl.appendChild(btn);
+  });
+  updateDots();
+}
+
+function selectAnswer(idx, btnEl){
+  if (answered) return;
+  answered = true;
+  const item = activeQuestions[current];
+  const allBtns = document.querySelectorAll('#options .opt');
+  allBtns.forEach(b => b.disabled = true);
+  const fb = document.getElementById('feedback');
+
+  if (idx === item.a){
+    score++;
+    btnEl.classList.add('correct');
+    fb.textContent = "Nice! That's correct.";
+    fb.style.color = '#b2d696';
+  } else {
+    btnEl.classList.add('wrong');
+    allBtns[item.a].classList.add('correct');
+    fb.textContent = 'Correct answer: ' + item.opts[item.a];
+    fb.style.color = '#f2a89b';
+  }
+  if (item.ex){
+    const ex = document.getElementById('explain');
+    ex.textContent = item.ex;
+    ex.classList.add('show');
+  }
+  document.getElementById('nextBtn').classList.add('show');
+}
+
+document.getElementById('nextBtn').addEventListener('click', () => {
+  current++;
+  if (current >= activeQuestions.length) showResult();
+  else renderQuestion();
+});
+
+function showResult(){
+  document.getElementById('quizCard').style.display = 'none';
+  document.getElementById('dots').style.display = 'none';
+  const resultEl = document.getElementById('result');
+  resultEl.classList.add('show');
+  document.getElementById('scoreBig').textContent = score + '/' + activeQuestions.length;
+  const pct = Math.round((score/activeQuestions.length)*100);
+  let msg;
+  if (pct === 100) msg = "Perfect score! Bahut badhiya. ⭐";
+  else if (pct >= 70) msg = "Great job! Keep practicing.";
+  else if (pct >= 40) msg = "Good start — try again!";
+  else msg = "Keep learning, you'll improve!";
+  document.getElementById('resultMsg').textContent = msg;
+}
+document.getElementById('retryBtn').addEventListener('click', startQuiz);
+
+/* ---------- ADD ---------- */
+document.getElementById('saveBtn').addEventListener('click', () => {
+  const q = document.getElementById('fQuestion').value.trim();
+  const opts = [0,1,2,3].map(i => document.getElementById('fOpt'+i).value.trim());
+  const correct = parseInt(document.querySelector('input[name=correctOpt]:checked').value, 10);
+  const ex = document.getElementById('fExplain').value.trim();
+  const saveMsg = document.getElementById('saveMsg');
+
+  if (!q || opts.some(o => !o)){
+    saveMsg.style.color = '#f26d5b';
+    saveMsg.textContent = 'Please fill the question and all 4 options.';
+    return;
+  }
+
+  getBucket().push({ q, opts, a: correct, ex });
+  saveData();
+
+  document.getElementById('fQuestion').value = '';
+  [0,1,2,3].forEach(i => document.getElementById('fOpt'+i).value = '');
+  document.getElementById('fExplain').value = '';
+  document.querySelector('input[name=correctOpt][value="0"]').checked = true;
+
+  saveMsg.style.color = '#b2d696';
+  saveMsg.textContent = 'Saved to ' + classLabel() + ' · ' + sectionLabel() + '!';
+  renderManageList();
+});
+
+/* ---------- MANAGE ---------- */
+function renderManageList(){
+  const list = document.getElementById('manageList');
+  const bucket = getBucket();
+  list.innerHTML = '';
+  if (bucket.length === 0){
+    list.innerHTML = '<div class="empty-state"><div class="big">Nothing here yet</div><div>Add questions from the + Add tab.</div></div>';
+    return;
+  }
+  bucket.forEach((item, idx) => {
+    const div = document.createElement('div');
+    div.className = 'manage-item';
+    div.innerHTML = '<div class="qtxt">' + escapeHtml(item.q) + '</div>' +
+      '<div class="meta">Correct: ' + escapeHtml(item.opts[item.a]) + '</div>';
+    const delBtn = document.createElement('button');
+    delBtn.className = 'del-btn';
+    delBtn.textContent = 'Delete';
+    delBtn.addEventListener('click', () => {
+      bucket.splice(idx, 1);
+      saveData();
+      renderManageList();
+      if (document.getElementById('view-quiz').classList.contains('active')) startQuiz();
+    });
+    div.appendChild(delBtn);
+    list.appendChild(div);
+  });
+}
+function escapeHtml(str){
+  const div = document.createElement('div');
+  div.textContent = str;
+  return div.innerHTML;
+}
+
+/* ---------- INIT ---------- */
+renderLogo();
+updateAddingLabel();
+startQuiz();
+renderManageList();
+</script>
+</body>
+</html>
